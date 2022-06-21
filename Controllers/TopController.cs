@@ -31,7 +31,7 @@ public class TopController : PlatformController
 
 		return Ok(new GenericData
 		{
-			{ "data", token.JWT }
+			{ "token", token.JWT }
 		});
 	}
 
@@ -40,7 +40,7 @@ public class TopController : PlatformController
 	{
 		return Ok(new GenericData
 		{
-			{ "deleted", _tokenService.Delete(Token.Username) }
+			{ "deleted", _tokenService.Delete(Token.ScreenName) }
 		});
 	}
 
