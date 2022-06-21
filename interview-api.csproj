@@ -11,4 +11,8 @@
 	  <PackageReference Include="platform-csharp-common" Version="1.1.25" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="wwwroot\images" />
+	</ItemGroup>
+
 </Project>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Rumble Interview</title>
+</head>
+<body>
+
+<img src="/images/logo.png" alt="Rumble Logo"></img>
+<hr />
+<h1>Login</h1>
+<div id="login">
+	<form>
+		<label>
+			<input type="text" name="screenname" placeholder="screenname">
+		</label>
+		<label>
+			<input type="text" name="password" placeholder="password">
+		</label>
+		<label>
+			<input type="button" name="submit" placeholder="screenname" value="Login" onclick="onLogin(this)">
+		</label>
+	</form>
+</div>
+
+<hr />
+<h1>Register</h1>
+<div id="register">
+	<form>
+		<label>
+			<input type="text" name="email" placeholder="email">
+		</label>
+		<label>
+			<input type="text" name="screenname" placeholder="screenname">
+		</label>
+		<label>
+			<input type="text" name="password" placeholder="password">
+		</label>
+		<label>
+			<input type="button" name="submit" placeholder="screenname" value="Submit">
+		</label>
+	</form>
+</div>
+
+
+<hr />
+<h1>Here be dragons</h1>
+
+
+<div id="home">
+</div>
+<script>
+	/*
+		POST	/interview/register
+			screenname	(string)
+			email		(string)
+			password	(string)
+			
+			returns JWT as 'token'
+	
+		POST	/interview/login
+			screenname	(string)
+			password	(string)
+	
+		DELETE	/interview/account
+			* Requires JWT as authorization header
+	
+		GET		/interview/mail 
+			* Requires JWT as authorization header
+	 */
+	const baseUrl = "https://dev.nonprod.tower.cdrentertainment.com/interview/";
+
+	function onRegister(response) {
+
+	}
+	function onLogin(button) {
+		console.log("login");
+
+	}
+	function onDeleteAccount(response) {
+
+	}
+	function displayMail(messages) {
+
+	}
+</script>
+</body>
+</html>

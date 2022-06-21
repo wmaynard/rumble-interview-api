@@ -6,5 +6,5 @@ namespace Rumble.Platform.Interview;
 
 public class Startup : PlatformStartup
 {
-	public void ConfigureServices(IServiceCollection services) => base.ConfigureServices(services, Owner.Will, 30_000, 60_000, 90_000);
+	public void ConfigureServices(IServiceCollection services) => base.ConfigureServices(services, Owner.Will, 30_000, 60_000, 90_000, webServerEnabled: true);
 }
