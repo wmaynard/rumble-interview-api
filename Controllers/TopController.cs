@@ -55,6 +55,8 @@ public class TopController : PlatformController
 
 		if (_tokenService.Exists(screenname, password))
 			throw new PlatformException("That account already exists.", code: ErrorCode.MalformedRequest);
+		if (_tokenService.UsernameTaken(screenname))
+			throw new PlatformException("That username is taken.", code: ErrorCode.MalformedRequest);
 		
 		_apiService
 			.Request(PlatformEnvironment.Url(endpoint: "/secured/token/generate"))

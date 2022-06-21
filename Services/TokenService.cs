@@ -24,6 +24,10 @@ public class TokenService : PlatformMongoService<Token>
 	public bool Exists(string screenname, string password) =>
 		0 < _collection
 			.CountDocuments(filter: token => token.Screenname == screenname && token.Password == password);
+
+	public bool UsernameTaken(string screenname) =>
+		0 < _collection
+			.CountDocuments(filter: token => token.Screenname == screenname);
 	public void Save(Token token)
 	{
 		try
