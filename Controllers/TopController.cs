@@ -95,6 +95,21 @@ public class TopController : PlatformController
 	[HttpGet, Route("mail")]
 	public ActionResult Messages()
 	{
-		throw new NotImplementedException();
+		Mail[] messages =
+		{
+			new Mail(0, 2)
+			{
+				Title = "Welcome!",
+				Icon = PlatformEnvironment.Url("/interview/images/_iconToken.png")
+			}, new Mail(loremIpsumStart: 8, 2)
+			{
+				Title = $"Expected server downtime at {DateTime.Now.AddDays(3)}",
+				Icon = PlatformEnvironment.Url("/interview/images/_iconPlatform.png")
+			}
+		};
+		return Ok(new
+		{
+			Messages = messages
+		});
 	}
 }

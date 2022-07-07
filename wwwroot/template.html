@@ -3,10 +3,83 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Rumble Interview</title>
+	<style>
+		div#intro > table {
+			border: solid 1px black;
+			margin: 1.5em 0;
+			border-collapse: collapse;
+		}
+		
+		div#intro * tr:first-child {
+			background-color: lightgray;
+			font-weight: bolder;
+		}
+
+		div#intro * tr,
+		div#intro * td {
+			border:solid 1px darkgray;
+			border-collapse: collapse;
+		}
+		div#intro * td {
+			padding: 0 1em;
+		}
+	</style>
 </head>
 <body>
 
-<img src="/images/logo.png" alt="Rumble Logo"></img>
+<img src="/images/logo.png" alt="Rumble Logo" />
+
+<hr />
+
+<h1>Introduction</h1>
+<div id="intro">
+	This coding assessment will test you on API integrations.  Below this section is a form that hasn't been hooked up to an API; your goal is to make it "work".  You have the following documentation regarding the API:
+	
+	<table>
+		<tr>
+			<td>HTTP Method</td>
+			<td>Relative URL</td>
+			<td>Required Fields</td>
+			<td>Comments</td>
+		</tr>
+		<tr>
+			<td>DELETE</td>
+			<td>/account</td>
+			<td></td>
+			<td>Requires token as authorization.  Deletes the account associated with the token.</td>
+		</tr>
+		<tr>
+			<td>GET</td>
+			<td>/mail</td>
+			<td></td>
+			<td>Requires token as authorization.  Returns any server messages for the user.</td>
+		</tr>
+		<tr>
+			<td>POST</td>
+			<td>/login</td>
+			<td>password (string)<br />screenname (string)</td>
+			<td>Logs in with the screenname and password.  Returns a JWT that can be used for other requests.</td>
+		</tr>
+		<tr>
+			<td>POST</td>
+			<td>/register</td>
+			<td>email (string)<br />password (string)<br />screenname (string)</td>
+			<td>Creates an account on the server using provided credentials.</td>
+		</tr>
+	</table>
+	
+	Recommended first steps:
+	
+	<ul>
+		<li>Create a function to make web requests to the API.</li>
+		<li>Create CRUD functions to handle JWTs (tokens).</li>
+		<li>Hook up a form feature to the API with the web request function.</li>
+		<li>Keep an eye on your console logs!</li>
+	</ul>
+	
+	You're encouraged to add styling, but functionality should be the top priority.  Ask questions if you're stuck; I'm here to help!
+</div>
+
 <hr />
 <h1>Login</h1>
 <div id="login">
@@ -15,10 +88,10 @@
 			<input type="text" name="screenname" placeholder="screenname">
 		</label>
 		<label>
-			<input type="text" name="password" placeholder="password">
+			<input type="password" name="password" placeholder="password">
 		</label>
 		<label>
-			<input type="button" name="submit" placeholder="screenname" value="Login" onclick="onLogin(this)">
+			<input type="button" name="submit" value="Login" onclick="onLogin(processForm(this))">
 		</label>
 	</form>
 </div>
@@ -26,7 +99,7 @@
 <hr />
 <h1>Register</h1>
 <div id="register">
-	<form>
+	<form id="registerForm">
 		<label>
 			<input type="text" name="email" placeholder="email">
 		</label>
@@ -34,54 +107,152 @@
 			<input type="text" name="screenname" placeholder="screenname">
 		</label>
 		<label>
-			<input type="text" name="password" placeholder="password">
+			<input type="password" name="password" placeholder="password">
 		</label>
 		<label>
-			<input type="button" name="submit" placeholder="screenname" value="Submit">
+			<input type="button" name="submit" value="Submit" onclick="onRegister(processForm(this))">
 		</label>
 	</form>
 </div>
 
+<hr />
+<h1>Delete Account</h1>
+<div id="delete">
+	<form>
+		<label>
+			<input type="button" name="submit" value="Delete Account" onclick="onDeleteAccount(processForm(this))">
+		</label>
+	</form>
+</div>
 
 <hr />
-<h1>Here be dragons</h1>
+<h1>System Messages</h1>
+<div id="mail">
+	<form>
+		<label>
+			<input type="button" name="submit" value="Get Mail" onclick="onFetchMail(processForm(this))">
+		</label>
+	</form>
+	<div id="messages">
+		(No messages loaded yet)
+	</div>
+</div>
 
 
 <div id="home">
 </div>
 <script>
-	/*
-		POST	/interview/register
-			screenname	(string)
-			email		(string)
-			password	(string)
-			
-			returns JWT as 'token'
-	
-		POST	/interview/login
-			screenname	(string)
-			password	(string)
-	
-		DELETE	/interview/account
-			* Requires JWT as authorization header
-	
-		GET		/interview/mail 
-			* Requires JWT as authorization header
-	 */
-	const baseUrl = "https://dev.nonprod.tower.cdrentertainment.com/interview/";
+	// const baseUrl = "https://dev.nonprod.tower.cdrentertainment.com/interview/";
+	const baseUrl = "http://localhost:5161/interview/";
 
-	function onRegister(response) {
-
+	function onRegister(formData) {
+		request("POST", "register", null, formData, function(json) {
+			console.log("Registration success!");
+		});
 	}
-	function onLogin(button) {
+	function onLogin(formData) {
 		console.log("login");
-
+		
+		request("POST", "login", null, formData, function(json) {
+			saveToken(json.token);
+		});
+		
+		// TODO: After a successful login, use the provided token to GET /mail, and display it on the page.
 	}
-	function onDeleteAccount(response) {
+	function onDeleteAccount(formData) {
+		console.log("delete");
+		
+		// TODO: Use the provided token to call DELETE /interview/account.
+		request("DELETE", "account", loadToken(), null, clearToken);
+	}
+	function onFetchMail(formData) {
+		console.log("get mail")
 
+		request("GET", "mail", loadToken(), null, function(json) {
+			displayMail(json.messages);
+		});
 	}
 	function displayMail(messages) {
+		console.log("Time to display messages");
+		
+		let div = document.getElementById("messages");
+		
+		// TODO: Craft the messages here.
+		
+		div.innerText = JSON.stringify(messages);
+	}
+	
+	// This function extracts form data from button clicks and processes it into a JSON object.
+	function processForm(button) {
+		let form = button.parentElement.parentElement;
+		
+		let output = {};
+		
+		Array.from(form.children).forEach(function(child) {
+			Array.from(child.children).forEach(function(input) {
+				if (input.type === "text" || input.type === "password") {
+					output[input.name] = input.value;
+					input.value = "";
+				}
+			});
+		});
+		
+		return output;
+	}
+	
+	// Functions that the candidates SHOULD write themselves, but can be provided if they struggle
+	
+	function saveToken(token) {
+		if (!token)
+			console.error("Token is not truthy!");
+		console.log("Token stored.");
+		localStorage.setItem("token", token);
+	}
+	function loadToken() {
+		console.log("Token fetched.");
 
+		let token = localStorage.getItem("token");
+		if (!token)
+			console.error("Token is not truthy!");
+		return token;
+	}
+	function clearToken() {
+		localStorage.removeItem("token");
+		console.log("Token cleared.");
+	}
+	
+	function request(method, relativeUrl, token, body, onSuccess) {
+		let xhr = new XMLHttpRequest();
+		xhr.onreadystatechange = function() {
+			if (xhr.readyState === 4) { 							// done
+				if (xhr.status >= 200 && xhr.status < 300) {		// successful request (2xx code)
+					try {
+						onSuccess(JSON.parse(xhr.responseText));
+					} catch {
+						onSuccess(xhr.responseText);
+					}
+				}
+				else												// anything else is a failure
+					try {
+						var json = JSON.parse(xhr.responseText);
+	
+						console.error("Server response: " + json.message);
+						console.error("     Error code: " + json.errorCode);
+					} catch {
+						console.error(xhr.responseText);
+					}
+			}
+		}
+
+		xhr.open(method, baseUrl + relativeUrl, true);
+
+		if (token != null)
+		{
+			if (!token.startsWith("Bearer "))
+				token = "Bearer " + token;
+			xhr.setRequestHeader("Authorization", token);
+		}
+		xhr.send(JSON.stringify(body));
 	}
 </script>
 </body>
