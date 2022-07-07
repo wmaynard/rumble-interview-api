@@ -62,7 +62,7 @@ service:
 ingress:
   enabled: true
   paths: 
-    - "/"
+    - "/interview"
   tls:
     enabled: false
     acme: false
