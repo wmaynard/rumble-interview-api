@@ -61,8 +61,7 @@ service:
   internalPort: 80
 ingress:
   enabled: true
-  paths: 
-    - "/interview"
+  path: "/interview"
   tls:
     enabled: false
     acme: false
