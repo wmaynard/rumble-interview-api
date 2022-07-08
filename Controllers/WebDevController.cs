@@ -100,11 +100,13 @@ public class WebDevController : PlatformController
 			new Mail(0, 2)
 			{
 				Title = "Welcome!",
-				Icon = PlatformEnvironment.Url("/interview/images/_iconToken.png")
+				// Icon = PlatformEnvironment.Url("/interview/images/_iconToken.png")
+				Icon = PlatformEnvironment.Url("https://eng.towersandtitans.com/img/rumble-logo.png")
 			}, new Mail(loremIpsumStart: 8, 2)
 			{
 				Title = $"Expected server downtime at {DateTime.Now.AddDays(3)}",
-				Icon = PlatformEnvironment.Url("/interview/images/_iconPlatform.png")
+				// Icon = PlatformEnvironment.Url("/interview/images/_iconPlatform.png")
+				Icon = PlatformEnvironment.Url("https://eng.towersandtitans.com/img/rumble-logo.png")
 			}
 		};
 		return Ok(new
