@@ -9,7 +9,7 @@
 			margin: 1.5em 0;
 			border-collapse: collapse;
 		}
-		
+
 		div#intro * tr:first-child {
 			background-color: lightgray;
 			font-weight: bolder;
@@ -23,18 +23,19 @@
 		div#intro * td {
 			padding: 0 1em;
 		}
+
 	</style>
 </head>
 <body>
 
-<img src="/images/logo.png" alt="Rumble Logo" />
+<img src="https://eng.towersandtitans.com/img/rumble-logo.png" alt="Rumble Logo" style="background-color: gray" />
 
 <hr />
 
 <h1>Introduction</h1>
 <div id="intro">
 	This coding assessment will test you on API integrations.  Below this section is a form that hasn't been hooked up to an API; your goal is to make it "work".  You have the following documentation regarding the API:
-	
+
 	<table>
 		<tr>
 			<td>HTTP Method</td>
@@ -67,16 +68,12 @@
 			<td>Creates an account on the server using provided credentials.</td>
 		</tr>
 	</table>
-	
-	Recommended first steps:
-	
+
 	<ul>
-		<li>Create a function to make web requests to the API.</li>
-		<li>Create CRUD functions to handle JWTs (tokens).</li>
-		<li>Hook up a form feature to the API with the web request function.</li>
-		<li>Keep an eye on your console logs!</li>
+		<li>Use the request() function to hook up the form to the API.</li>
+		<li>Store / load the token with local storage.</li>
 	</ul>
-	
+
 	You're encouraged to add styling, but functionality should be the top priority.  Ask questions if you're stuck; I'm here to help!
 </div>
 
@@ -142,52 +139,75 @@
 <div id="home">
 </div>
 <script>
-	// const baseUrl = "https://dev.nonprod.tower.cdrentertainment.com/interview/";
-	const baseUrl = "http://localhost:5161/interview/web-dev/";
+	const baseUrl = "https://dev.nonprod.tower.cdrentertainment.com/interview/web-dev/";
 
+	// /register returns a 204
 	function onRegister(formData) {
-		request("POST", "register", null, formData, function(json) {
-			console.log("Registration success!");
-		});
+		console.log("register");
+		// TODO
 	}
+
+	// /login returns a JWT
 	function onLogin(formData) {
 		console.log("login");
-		
-		request("POST", "login", null, formData, function(json) {
-			saveToken(json.token);
-		});
-		
-		// TODO: After a successful login, use the provided token to GET /mail, and display it on the page.
+
+		// TODO: After a successful login, store the token
 	}
+
+	// /delete returns a count of how many records were deleted
 	function onDeleteAccount(formData) {
 		console.log("delete");
-		
-		// TODO: Use the provided token to call DELETE /interview/account.
-		request("DELETE", "account", loadToken(), null, clearToken);
-	}
-	function onFetchMail(formData) {
-		console.log("get mail")
 
-		request("GET", "mail", loadToken(), null, function(json) {
-			displayMail(json.messages);
-		});
+		// TODO: Use the stored token to call DELETE /interview/account.
 	}
+
+
+	// /mail returns a field `messages`, which is an array of items.
+	function onFetchMail(formData) {
+		console.log("get mail");
+
+		// TODO: Use the stored token to get mail and display them in a callback
+	}
+
+	// Mail messages have the following fields: `id`, `title`, `message`, `icon`
 	function displayMail(messages) {
 		console.log("Time to display messages");
-		
+
 		let div = document.getElementById("messages");
-		
+
 		// TODO: Craft the messages here.
-		
+
 		div.innerText = JSON.stringify(messages);
+		
+request("POST", "login", null, formData, function(response) {
+	saveToken(response.token);
+});
 	}
-	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	// Provided functions
 	// This function extracts form data from button clicks and processes it into a JSON object.
 	function processForm(button) {
 		let form = button.parentElement.parentElement;
-		
+
 		let output = {};
-		
+
 		Array.from(form.children).forEach(function(child) {
 			Array.from(child.children).forEach(function(input) {
 				if (input.type === "text" || input.type === "password") {
@@ -196,12 +216,12 @@
 				}
 			});
 		});
-		
+
 		return output;
 	}
-	
+
 	// Functions that the candidates SHOULD write themselves, but can be provided if they struggle
-	
+
 	function saveToken(token) {
 		if (!token)
 			console.error("Token is not truthy!");
@@ -220,7 +240,11 @@
 		localStorage.removeItem("token");
 		console.log("Token cleared.");
 	}
-	
+
+	// method: GET, POST, DELETE, HEAD (etc)
+	// relativeUrl: "account", "mail" (etc)
+	// body: JSON object
+	// onSuccess: callback that handles JSON object
 	function request(method, relativeUrl, token, body, onSuccess) {
 		let xhr = new XMLHttpRequest();
 		xhr.onreadystatechange = function() {
@@ -235,7 +259,7 @@
 				else												// anything else is a failure
 					try {
 						var json = JSON.parse(xhr.responseText);
-	
+
 						console.error("Server response: " + json.message);
 						console.error("     Error code: " + json.errorCode);
 					} catch {

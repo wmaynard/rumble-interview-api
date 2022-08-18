@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
+using Rumble.Platform.Common.Enums;
 using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Models;
 using Rumble.Platform.Common.Services;
@@ -17,7 +18,7 @@ public class TokenService : PlatformMongoService<Token>
 		_collection
 			.Find(filter: token => token.Screenname == screenname && token.Password == password)
 			.FirstOrDefault() 
-			?? throw new PlatformException("Account not found.", code: ErrorCode.NotSpecified);
+			?? throw new PlatformException("Account not found.", code: ErrorCode.InvalidRequestData);
 
 	public new int Delete(string screenname) => (int)_collection.DeleteMany(filter: token => token.Screenname == screenname).DeletedCount;
 	
