@@ -4,6 +4,7 @@ using Rumble.Platform.Common.Enums;
 using Rumble.Platform.Common.Exceptions;
 using Rumble.Platform.Common.Utilities;
 using Rumble.Platform.Common.Web;
+using Rumble.Platform.Common.Utilities.JsonTools;
 using Rumble.Platform.Interview.Models;
 using Rumble.Platform.Interview.Services;
 
@@ -28,9 +29,9 @@ public class WebDevController : PlatformController
 		_apiService
 			.Request(PlatformEnvironment.Url("token/validate"))
 			.AddAuthorization(token.JWT)
-			.Get(out GenericData _, out int code);
+			.Get(out RumbleJson _, out int code);
 
-		return Ok(new GenericData
+		return Ok(new RumbleJson
 		{
 			{ "token", token.JWT }
 		});
@@ -39,7 +40,7 @@ public class WebDevController : PlatformController
 	[HttpDelete, Route("account")]
 	public ActionResult DeleteAccount()
 	{
-		return Ok(new GenericData
+		return Ok(new RumbleJson
 		{
 			{ "deleted", _tokenService.Delete(Token.ScreenName) }
 		});
@@ -52,7 +53,7 @@ public class WebDevController : PlatformController
 		string email = Require<string>("email");
 		string password = Require<string>("password");
 
-		GenericData failure = null;
+		RumbleJson failure = null;
 
 		if (_tokenService.Exists(screenname, password))
 			throw new PlatformException("That account already exists.", code: ErrorCode.MalformedRequest);
@@ -61,7 +62,7 @@ public class WebDevController : PlatformController
 		
 		_apiService
 			.Request(PlatformEnvironment.Url(endpoint: "/secured/token/generate"))
-			.SetPayload(new GenericData
+			.SetPayload(new RumbleJson
 			{
 				{ "aid", $"interview-{Guid.NewGuid()}"},
 				{ "screenname", screenname },
@@ -74,14 +75,14 @@ public class WebDevController : PlatformController
 			{
 				failure = reply;
 			})
-			.Post(out GenericData response, out int code);
+			.Post(out RumbleJson response, out int code);
 
 		if (failure != null)
 			return Problem(failure);
 
 		Token token = new Token
 		{
-			JWT = response.Require<GenericData>("authorization").Require<string>("token"),
+			JWT = response.Require<RumbleJson>("authorization").Require<string>("token"),
 			Screenname = screenname,
 			Password = password
 		};
